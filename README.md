@@ -1,8 +1,11 @@
 # CSCI4145-project
 CSCI 4145 Group Project
 
+TODO: Write unit tests with `unittest` python package
+
 ### Functionality
  * TODO --> Setup milestones on Github/issue trackers
+ * We should aim to implement MVC architecture
 
 ### Development Stack & Workflow
 * I'm using Anaconda as my package manager
@@ -14,10 +17,14 @@ CSCI 4145 Group Project
     (don't merge into master directly)
 * I'm using PyCharm if anyone is in need of a good Python
 IDE
+* Uses MongoDB hosted on Azure
     
 ## Dependencies
 * Python 3.x
 * Flask-based web service
+* `python -m pip install pymongo`
+* `conda install dnspython`
+
 
 ### Documentation
 * See [Google's Style Guide (only worried about docstrings)](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
