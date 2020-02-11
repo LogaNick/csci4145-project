@@ -4,11 +4,20 @@ CSCI 4145 Group Project
 ### Functionality
  * TODO --> Setup milestones on Github/issue trackers
 
-### Development Stack
-
+### Development Stack & Workflow
+* I'm using Anaconda as my package manager
+    * see their website for installation 
+    * can install flask with anaconda by doing the following:
+    ```conda install flask```
+* Only bug-free version of the app will go in the master branch
+    * Branch off of ``development`` to add features and merge back into it
+    (don't merge into master directly)
+* I'm using PyCharm if anyone is in need of a good Python
+IDE
+    
+## Dependencies
 * Python 3.x
 * Flask-based web service
-* (I'm using PyCharm as my IDE if others want to do the same)
 
 ### Documentation
 * See [Google's Style Guide (only worried about docstrings)](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
@@ -17,5 +26,11 @@ CSCI 4145 Group Project
 
   * not sure about ^ this yet. might not be worth it if we just use markdown
 
+## Usage
+
+### Running the app locally
+If you want to run the app locally using the development
+server, just run `python news_api.py` and as long as you 
+have Python and Flask correctly installed, it should work.
   
 
