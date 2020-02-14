@@ -1,5 +1,6 @@
 """This file implements the News class."""
 import datetime
+from flask import jsonify
 
 class News():
     def __init__(self, username, time, body, comments=None):
@@ -26,11 +27,22 @@ class News():
     def remove_comment(self, index):
         pass
 
-
     @staticmethod
     def get_news():
         """Returns all news objects from DB."""
         pass
+
+    @staticmethod
+    def obj_to_dict(news_obj):
+        json = {}
+
+        for key in news_obj.keys():
+            if key == '_id':
+                json[key] = str(news_obj[key])
+            else:
+                json[key] = news_obj[key]
+
+        return json
 
 class Comment():
     def __init__(self, body, time):
