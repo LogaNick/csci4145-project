@@ -24,6 +24,7 @@ IDE
 * Flask-based web service
 * `python -m pip install pymongo`
 * `conda install dnspython`
+* `pip install Flask-PyMongo`
 
 
 ### Documentation
