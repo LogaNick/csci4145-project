@@ -1,13 +1,14 @@
 """This file contains the api for the Student Life News web service"""
 
 # External imports
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
+import datetime
 
 # internal imports
-from news import News
+from news import obj_to_dict
 
 # Instatiate app and Flask-MongoDB
 app = Flask(__name__)
@@ -17,32 +18,58 @@ mongo = PyMongo(app)
 # A minimal web server to get started
 @app.route('/')
 def index():
-    return 'You are at the Student Life News API'
+    return '<h1>You are at the Student Life News API</h1>'
 
-@app.route('/news', methods=['GET'])
+@app.route('/news', methods=['GET', 'POST'])
 def get_news():
-    """Returns a collection of news objects in JSON format.
+    """Returns a collection of news objects in JSON format (GET) or POST a piece of news.
 
     Returning a Python dictionary with Flask will suffice since
     dictionaries are automatically converted to JSON.
     """
-    news_objs = []
-    for news_obj in mongo.db.news.find():
-        news_objs.append({'_id': str(news_obj['_id']), 'body': news_obj['body'], 'user': news_obj['user']})
 
-    return jsonify(news_objs)
+    if request.method == 'GET':
+        # Get requests to /news means return collection of news objects in DB
+        news_objs = []
+        for news_obj in mongo.db.news.find():
+            news_objs.append(obj_to_dict(news_obj))
 
-@app.route('/news/<_id>', methods=['GET'])
+        return jsonify(news_objs)
+    elif request.method == 'POST':
+        # TODO: validate data before post
+        id = mongo.db.news.insert_one(request.form)
+        return jsonify(id)
+    else:
+        # TODO: handle error properly
+        return 'ERROR: invalid HTTP request'
+
+
+
+@app.route('/news/<_id>', methods=['GET', 'DELETE'])
 def get_news_by_id(_id):
-    """Get a news objects by its ID in JSON format.
+    """Get a news objects by its ID in JSON format (GET) or deletes a news object by its ID (DELETE).
 
+    Args:
+        _id (PyMongo built in id): the key for the desired news object
+
+    Returns:
+        a jsonified version of the News object
     """
-    # TODO(nicholasbarreyre): document this
 
-    news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
-    news_json = jsonify(News.obj_to_dict(news_obj))
+    if request.method == 'GET':
+        news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
+        news_json = jsonify(obj_to_dict(news_obj))
 
-    return news_json
+        return news_json
+    elif request.method == 'DELETE':
+        # The following query returns an object of type DeleteResult
+        _ = mongo.db.news.delete_one({'_id': ObjectId(_id)})
+        # TODO: use the DeleteResult properly when creating response
+        return "Delete successful"
+    else:
+        #TODO: handle this case properly
+        return "Error"
+
 
 #TODO delete this before deployment
 def create_mock_data():
@@ -51,9 +78,7 @@ def create_mock_data():
     # Clear DB
     mongo.db.news.delete_many({})
 
-    # Make fake news objects
-
-    # Make mock data
+    # Make some fake news
     fake_news = [{'body': "This is some news", 'user':"Nick"}, {'body': "This is some more news", 'user': "Random"}]
 
     # Insert multiple documents
