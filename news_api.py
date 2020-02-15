@@ -37,8 +37,13 @@ def get_news():
         return jsonify(news_objs)
     elif request.method == 'POST':
         # TODO: validate data before post
-        id = mongo.db.news.insert_one(request.form)
-        return jsonify(id)
+        assert request.json is not None
+
+        # This return an object of type InsertOneResult
+        result = mongo.db.news.insert_one(request.json)
+
+        # TODO: use InsertOneResult properly in this response
+        return "Successfully inserted news in DB"
     else:
         # TODO: handle error properly
         return 'ERROR: invalid HTTP request'
@@ -64,6 +69,7 @@ def get_news_by_id(_id):
     elif request.method == 'DELETE':
         # The following query returns an object of type DeleteResult
         _ = mongo.db.news.delete_one({'_id': ObjectId(_id)})
+
         # TODO: use the DeleteResult properly when creating response
         return "Delete successful"
     else:
