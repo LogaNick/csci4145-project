@@ -1,5 +1,8 @@
 """Implements helper functions for the weather API requests."""
 
+import datetime
+import random
+
 def obj_to_dict(news_obj):
     """Convert PyMongo news object to dictionary representation"""
     json = {}
@@ -28,3 +31,12 @@ def is_valid_postal(postal_code):
     """Returns True if postal code is valid, otherwise returns False."""
     # TODO: implement this
     return True
+
+def snow_day_proba(postal_code):
+    day_of_week = datetime.datetime.today().weekday() # 0=Monday, ...,6=Sun
+
+    # If day of the week is Fri or Sat, then tomorrow is not a school day
+    if day_of_week == 4 or day_of_week == 5:
+        return -1
+    else:
+        return random.randint(0,100)

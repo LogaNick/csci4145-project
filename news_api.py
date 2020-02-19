@@ -54,6 +54,9 @@ def get_news():
 def get_snowday_proba(postal_code):
     """Returns an integer: the percent probability that tomorrow will be a snow day.
 
+    If tomorrow is a school day, then returns the percent probability that tomorrow will be a snow day. If tomorrow is
+    not a school day, then returns -1.
+
     Args:
         postal_code (str): a valid postal code
     """
@@ -63,7 +66,9 @@ def get_snowday_proba(postal_code):
             # TODO: handle error properly
             return "error"
 
-        return jsonify(50)
+        proba = snow_day_proba(postal_code)
+
+        return jsonify(proba)
     else:
         # TODO: handle error properly
         return 'ERROR: invalid HTTP request'
