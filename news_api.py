@@ -3,16 +3,15 @@
 # External imports
 from flask import Flask, jsonify, request, abort
 from flask_pymongo import PyMongo
-from bson import json_util
 from bson.objectid import ObjectId
-import datetime
 
 # internal imports
-from news import obj_to_dict
+from utils import *
+from constants import *
 
 # Instatiate app and Flask-MongoDB
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://nicholasbarreyre:zbYKVIASLhvZI3OC@csci4145-5m4ga.azure.mongodb.net/test?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = MONGO_URI
 mongo = PyMongo(app)
 
 # A minimal web server to get started
@@ -67,7 +66,28 @@ def get_news():
     else:
         abort(405, "Error: Only GET or POST are accepted.")
 
+@app.route('/snowday/<postal_code>', methods=['GET'])
+def get_snowday_proba(postal_code):
+    """Returns an integer: the percent probability that tomorrow will be a snow day.
 
+    If tomorrow is a school day, then returns the percent probability that tomorrow will be a snow day. If tomorrow is
+    not a school day, then returns -1.
+
+    Args:
+        postal_code (str): a valid postal code
+    """
+
+    if request.method == 'GET':
+        if not is_valid_postal(postal_code):
+            # TODO: handle error properly
+            return "error"
+
+        proba = snow_day_proba(postal_code)
+
+        return jsonify(proba)
+    else:
+        # TODO: handle error properly
+        return 'ERROR: invalid HTTP request'
 
 @app.route('/news/<_id>', methods=['GET', 'DELETE'])
 def get_news_by_id(_id):
@@ -79,7 +99,6 @@ def get_news_by_id(_id):
     Returns:
         a jsonified version of the News object
     """
-
     if request.method == 'GET':
         news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
         news_json = jsonify(obj_to_dict(news_obj))
