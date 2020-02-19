@@ -24,6 +24,10 @@ def index():
 @app.route('/weather/<date_string>', methods=['GET'])
 #TODO: allow user input of longitude, latitude? 
 def get_weather(date_string):
+    """Returns a json with weather data about a given day in Halifax
+    Args:
+        date_string (str): a date in YYYY-MM-DD format
+    """
     # Formatting required by weather API, using noon (Halifax time)
     date_string = date_string+'T12:00:00-0400'
 
