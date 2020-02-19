@@ -80,10 +80,8 @@ def get_news():
 
         # TODO: use InsertOneResult properly in this response
         return "Successfully inserted news in DB"
-    else:
-        abort(405, "Error: Only GET or POST are accepted.")
 
-@app.route('/news/<_id>', methods=['GET', 'DELETE'])
+@app.route('/news/<_id>', methods=['GET', 'DELETE', 'PUT'])
 def get_news_by_id(_id):
     """Get a news objects by its ID in JSON format (GET) or deletes a news object by its ID (DELETE).
 
@@ -108,8 +106,24 @@ def get_news_by_id(_id):
 
         # TODO: use the DeleteResult properly when creating response
         return "Delete successful"
+    elif request.method == 'PUT':
+        if request.json is None:
+            abort(400, "Error: None type is not an acceptable comment.")
+        elif 'user' not in request.json:
+            abort(400, "Error: Field 'user' not found.")
+        elif 'body' not in request.json:
+            abort(400, "Error: Field 'body' not found.")
+        elif type(request.json['user']) != str:
+            abort(400, "Error: 'user' of entry is not of valid type.")
+        elif type(request.json['body']) != str:
+            abort(400, "Error: 'body' of entry is not of valid type.")
+        else:
+            request.json['date'] = datetime.datetime.now()
+            result = mongo.db.news.update({"_id": ObjectId(_id)}, {$set: {"comments": 'TEST'}})
+            return result
     else:
         abort(405, "Error: Only GET or DELETE are accepted.")
+        return None
 
 @app.route('/snowday/<postal_code>', methods=['GET'])
 def get_snowday_proba(postal_code):
