@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request, abort
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+import datetime
 
 # internal imports
 from utils import *
@@ -40,25 +41,41 @@ def get_news():
             abort(400, "Error: None type is not acceptable as news.")
         elif type(request.json) == list:
             for item in request.json:
-                if len(item) > 2:
+                if len(item) > 3:
                     abort(400, "Too many fields in entry.")
+                elif 'body' not in item:
+                    abort(400, "Field 'body' not found.")
+                elif 'user' not in item:
+                    abort(400, "Field 'user' not found.")
+                elif 'title' not in item:
+                    abort(400, "Field 'title' not found.")
                 elif type(item['body']) != str:
                     abort(400, "Error: 'body' of entry is not a valid type.")
                 elif type(item['user']) != str:
                     abort(400, "Error: 'user' of entry is not of valid type.")
+                elif type(item['title']) != str:
+                    abort(400, "Error: 'title' of entry is not of valid type.")
+                item['comments'] = []
+                item['date'] = datetime.datetime.now()
             result = mongo.db.news.insert_many(request.json)
         else:
-            if len(request.json) > 2:
+            if len(request.json) > 3:
                 abort(400, "Too many fields in entry.")
             elif 'body' not in request.json:
                 abort(400, "Field 'body' not found.")
             elif 'user' not in request.json:
                 abort(400, "Field 'user' not found.")
+            elif 'title' not in request.json:
+                abort(400, "Field 'title' not found.")
             elif type(request.json['body']) != str:
                 abort(400, "Error: 'body' of entry is not a valid type.") 
             elif type(request.json['user']) != str:
                 abort(400, "Error: 'user' of entry is not of valid type.")
+            elif type(item['title']) != str:
+                abort(400, "Error: 'title' of entry is not of valid type.")
             else:
+                request.json['comments'] = []
+                request.json['date'] = datetime.datetime.now()
                 result = mongo.db.news.insert_one(request.json)
 
         # TODO: use InsertOneResult properly in this response
