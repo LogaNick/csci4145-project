@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request, abort
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+import requests
 
 # internal imports
 from utils import *
@@ -18,6 +19,17 @@ mongo = PyMongo(app)
 @app.route('/')
 def index():
     return '<h1>You are at the Student Life News API</h1>'
+
+@app.route('/weather/<date_string>', methods=['GET'])
+#TODO: allow user input of longitude, latitude? 
+def get_weather(date_string):
+    # Formatting required by weather API, using noon (Halifax time)
+    date_string = date_string+'T12:00:00-0400'
+
+    # Make weather API request
+    #TODO: Change request to use parameter dicts (tidier)
+    r = requests.get(WEATHER_BASE_URL+'/'+WEATHER_APP_ID+'/'+HALIFAX_LAT+','+HALIFAX_LONG+','+date_string+'?exclude=currently,flags,hourly,minutely,alerts&units=ca')
+    return r.json()
 
 @app.route('/news', methods=['GET', 'POST'])
 def get_news():

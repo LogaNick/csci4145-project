@@ -3,6 +3,19 @@
 import datetime
 import random
 
+#unused now, delete if still unused in final version
+def str_to_date(date_string):
+    """Convert str to date object
+
+    Args:
+        a string in YYYY-mm-dd format
+
+    Returns:
+        a date object
+    """
+    date = datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
+    return date
+
 def obj_to_dict(obj):
     """Convert PyMongo object to dictionary representation
 
