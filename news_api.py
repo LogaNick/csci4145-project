@@ -6,13 +6,15 @@ from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
 import datetime
+import requests
 
 # internal imports
-from news import obj_to_dict
+from utils import *
+from constants import *
 
 # Instatiate app and Flask-MongoDB
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://nicholasbarreyre:zbYKVIASLhvZI3OC@csci4145-5m4ga.azure.mongodb.net/test?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = MONGO_URI
 mongo = PyMongo(app)
 
 # A minimal web server to get started
@@ -48,7 +50,23 @@ def get_news():
         # TODO: handle error properly
         return 'ERROR: invalid HTTP request'
 
+@app.route('/snowday/<postal_code>', methods=['GET'])
+def get_snowday_proba(postal_code):
+    """Returns an integer: the percent probability that tomorrow will be a snow day.
 
+    Args:
+        postal_code (str): a valid postal code
+    """
+
+    if request.method == 'GET':
+        if not is_valid_postal(postal_code):
+            # TODO: handle error properly
+            return "error"
+
+        return jsonify(50)
+    else:
+        # TODO: handle error properly
+        return 'ERROR: invalid HTTP request'
 
 @app.route('/news/<_id>', methods=['GET', 'DELETE'])
 def get_news_by_id(_id):
@@ -60,7 +78,6 @@ def get_news_by_id(_id):
     Returns:
         a jsonified version of the News object
     """
-
     if request.method == 'GET':
         news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
         news_json = jsonify(obj_to_dict(news_obj))
@@ -75,7 +92,6 @@ def get_news_by_id(_id):
     else:
         #TODO: handle this case properly
         return "Error"
-
 
 #TODO delete this before deployment
 def create_mock_data():
