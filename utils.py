@@ -1,7 +1,4 @@
-"""This file implements the helper functions for news and comment data."""
-import datetime
-from flask import jsonify
-
+"""Implements helper functions for the weather API requests."""
 
 def obj_to_dict(news_obj):
     """Convert PyMongo news object to dictionary representation"""
@@ -25,4 +22,9 @@ def is_valid_news(news_dict):
         True if news_dict is valid news, otherwise returns False
     """
     #TODO: implement this
+    return True
+
+def is_valid_postal(postal_code):
+    """Returns True if postal code is valid, otherwise returns False."""
+    # TODO: implement this
     return True
