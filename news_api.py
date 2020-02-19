@@ -78,8 +78,11 @@ def get_news_by_id(_id):
     """
     # TODO: handle case when no news objct with that id
     if request.method == 'GET':
-        news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
-        news_json = jsonify(obj_to_dict(news_obj))
+        try:
+            news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
+            news_json = jsonify(obj_to_dict(news_obj))
+        except:
+            return abort(404, "No news exists with the given id.")
 
         return news_json
     elif request.method == 'DELETE':
