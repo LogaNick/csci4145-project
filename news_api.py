@@ -1,7 +1,7 @@
 """This file contains the api for the Student Life News web service"""
 
 # External imports
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
@@ -32,21 +32,40 @@ def get_news():
         # Get requests to /news means return collection of news objects in DB
         news_objs = []
         for news_obj in mongo.db.news.find():
-            news_objs.append(obj_to_dict(news_obj))
-
+            news_objs.append(obj_to_dict(news_obj)) 
         return jsonify(news_objs)
-    elif request.method == 'POST':
-        # TODO: validate data before post
-        assert request.json is not None
 
-        # This return an object of type InsertOneResult
-        result = mongo.db.news.insert_one(request.json)
+    elif request.method == 'POST':
+        #Validation of POST requests
+        if request.json is None:
+            abort(400, "Error: None type is not acceptable as news.")
+        elif type(request.json) == list:
+            for item in request.json:
+                if len(item) > 2:
+                    abort(400, "Too many fields in entry.")
+                elif type(item['body']) != str:
+                    abort(400, "Error: 'body' of entry is not a valid type.")
+                elif type(item['user']) != str:
+                    abort(400, "Error: 'user' of entry is not of valid type.")
+            result = mongo.db.news.insert_many(request.json)
+        else:
+            if len(request.json) > 2:
+                abort(400, "Too many fields in entry.")
+            elif 'body' not in request.json:
+                abort(400, "Field 'body' not found.")
+            elif 'user' not in request.json:
+                abort(400, "Field 'user' not found.")
+            elif type(request.json['body']) != str:
+                abort(400, "Error: 'body' of entry is not a valid type.") 
+            elif type(request.json['user']) != str:
+                abort(400, "Error: 'user' of entry is not of valid type.")
+            else:
+                result = mongo.db.news.insert_one(request.json)
 
         # TODO: use InsertOneResult properly in this response
         return "Successfully inserted news in DB"
     else:
-        # TODO: handle error properly
-        return 'ERROR: invalid HTTP request'
+        abort(405, "Error: Only GET or POST are accepted.")
 
 
 
@@ -73,25 +92,12 @@ def get_news_by_id(_id):
         # TODO: use the DeleteResult properly when creating response
         return "Delete successful"
     else:
-        #TODO: handle this case properly
-        return "Error"
+        abort(405, "Error: Only GET or DELETE are accepted.")
 
-
-#TODO delete this before deployment
-def create_mock_data():
-    """Create mock data for development."""
-
+def clear_data():
     # Clear DB
     mongo.db.news.delete_many({})
 
-    # Make some fake news
-    fake_news = [{'body': "This is some news", 'user':"Nick"}, {'body': "This is some more news", 'user': "Random"}]
-
-    # Insert multiple documents
-    mongo.db.news.insert_many(fake_news)
 
 if __name__ == '__main__':
-    #TODO: Remove this before deployment
-    create_mock_data()
-
     app.run(debug=True)
