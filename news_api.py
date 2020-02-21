@@ -138,7 +138,7 @@ def get_snowday_proba(postal_code):
         postal_code (str): a valid postal code
     """
     if request.method == 'GET':
-        if not is_valid_postal(postal_code):
+        if not is_valid_postal(postal_code.upper()):
             abort(400, "Postal Code is not valid.")
 
         proba = snow_day_proba(postal_code)

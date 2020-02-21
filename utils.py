@@ -2,6 +2,9 @@
 
 import datetime
 import random
+import re
+
+from constants import *
 
 #unused now, delete if still unused in final version
 def str_to_date(date_string):
@@ -51,14 +54,16 @@ def is_valid_news(news_dict):
 def is_valid_postal(postal_code):
     """Returns True if postal code is valid, otherwise returns False.
 
+    A valid postal code has the following form: A1A1A1 (A=letter, 1=digit from 0-9)
+
     Args:
         postal_code(str): a postal_code to validate
 
     Returns:
         True if postal_code is valid, otherwise returns False.
     """
-    # TODO: implement this
-    return True
+
+    return POSTAL_CODE_PATTERN.match(postal_code)
 
 def snow_day_proba(postal_code):
     """Returns the percent probability that tomorrow is a snowday (or -1) if tomorrow is not a school day.
@@ -75,4 +80,5 @@ def snow_day_proba(postal_code):
     if day_of_week == 4 or day_of_week == 5:
         return -1
     else:
+        random.seed(postal_code + str(day_of_week))
         return random.randint(0,100)
