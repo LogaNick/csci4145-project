@@ -37,7 +37,7 @@ def get_weather(date_string):
     return r.json()
 
 @app.route('/news', methods=['GET', 'POST'])
-def get_news():
+def news():
     """Returns a collection of news objects in JSON format (GET) or POST a piece of news.
 
     Returning a Python dictionary with Flask will suffice since
@@ -96,11 +96,9 @@ def get_news():
 
         # TODO: use InsertOneResult properly in this response
         return "Successfully inserted news in DB"
-    else:
-        abort(405, "Error: Only GET or POST are accepted.")
 
-@app.route('/news/<_id>', methods=['GET', 'DELETE'])
-def get_news_by_id(_id):
+@app.route('/news/<_id>', methods=['GET', 'DELETE', 'PUT'])
+def news_by_id(_id):
     """Get a news objects by its ID in JSON format (GET) or deletes a news object by its ID (DELETE).
 
     Args:
@@ -124,11 +122,29 @@ def get_news_by_id(_id):
 
         # TODO: use the DeleteResult properly when creating response
         return "Delete successful"
+    elif request.method == 'PUT':
+        if request.json is None:
+            abort(400, "Error: None type is not an acceptable comment.")
+        elif 'user' not in request.json:
+            abort(400, "Error: Field 'user' not found.")
+        elif 'body' not in request.json:
+            abort(400, "Error: Field 'body' not found.")
+        elif type(request.json['user']) != str:
+            abort(400, "Error: 'user' of entry is not of valid type.")
+        elif type(request.json['body']) != str:
+            abort(400, "Error: 'body' of entry is not of valid type.")
+        else:
+            request.json['date'] = datetime.datetime.now()
+            # TODO: @james-macphee this was causing an error so I made a temporary fix.
+            # result = mongo.db.news.update({"_id": ObjectId(_id)}, {$set: {"comments": 'TEST'}})
+            result = "successfully added news"
+            return result
     else:
         abort(405, "Error: Only GET or DELETE are accepted.")
+        return None
 
 @app.route('/snowday/<postal_code>', methods=['GET'])
-def get_snowday_proba(postal_code):
+def snowday(postal_code):
     """Returns an integer: the percent probability that tomorrow will be a snow day.
 
     If tomorrow is a school day, then returns the percent probability that tomorrow will be a snow day. If tomorrow is
