@@ -3,6 +3,7 @@
 import datetime
 import random
 import re
+import requests
 
 from constants import *
 
@@ -82,3 +83,22 @@ def snow_day_proba(postal_code):
     else:
         random.seed(postal_code + str(day_of_week))
         return random.randint(0,100)
+
+def weather_req(date: str):
+    """Returns a summary of the day's weather for a specific date
+
+    Args:
+        date (str): A date in YYYY-MM-DD format
+
+    Returns:
+        (requests.Response() object): A daily weather summary 
+    """
+    #TODO: reformat weather API request
+    response = requests.get(WEATHER_BASE_URL+'/'
+                            +WEATHER_APP_ID+'/'
+                            +HALIFAX_LAT+','
+                            +HALIFAX_LONG+','
+                            +date
+                            +'?exclude=currently,flags,hourly,minutely,alerts&units=ca'
+                            )
+    return response
