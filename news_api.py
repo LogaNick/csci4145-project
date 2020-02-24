@@ -63,7 +63,7 @@ def news():
             news_objs.append(obj_to_dict(news_obj))
         return jsonify(news_objs)
 
-    elif request.method == 'POST':
+    else:
         #Validation of POST requests
         if request.json is None:
             abort(400, "Error: None type is not acceptable as news.")
@@ -134,7 +134,7 @@ def news_by_id(_id):
 
         # TODO: use the DeleteResult properly when creating response
         return "Delete successful"
-    elif request.method == 'PUT':
+    else:
         if request.json is None:
             abort(400, "Error: None type is not an acceptable comment.")
         elif 'user' not in request.json:
@@ -151,9 +151,7 @@ def news_by_id(_id):
             # result = mongo.db.news.update({"_id": ObjectId(_id)}, {$set: {"comments": 'TEST'}})
             result = "successfully added news"
             return result
-    else:
-        abort(405, "Error: Only GET or DELETE are accepted.")
-        return None
+
 
 @app.route('/snowday/<postal_code>', methods=['GET'])
 def snowday(postal_code):
@@ -165,15 +163,12 @@ def snowday(postal_code):
     Args:
         postal_code (str): a valid postal code
     """
-    if request.method == 'GET':
-        if not is_valid_postal(postal_code.upper()):
-            abort(400, "Postal Code is not valid.")
+    if not is_valid_postal(postal_code.upper()):
+        abort(400, "Postal Code is not valid.")
 
-        proba = snow_day_proba(postal_code)
+    proba = snow_day_proba(postal_code)
 
-        return jsonify(proba)
-    else:
-        abort(405, "Error: Only GET is accepted.")
+    return jsonify(proba)
 
 def clear_data():
     # Clear DB
