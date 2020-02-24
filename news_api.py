@@ -68,14 +68,10 @@ def news():
             for item in request.json:
                 if len(item) > 3:
                     abort(400, "Too many fields in entry.")
-                elif 'body' not in item:
-                    abort(400, "Field 'body' not found.")
-                elif 'user' not in item:
-                    abort(400, "Field 'user' not found.")
-                elif 'title' not in item:
-                    abort(400, "Field 'title' not found.")
+                elif 'body' not in item or 'user' not in item or 'title' not in item:
+                    abort(400, "Field 'body', 'user', or 'title' not found.")
                 elif type(item['body']) != str:
-                    abort(400, "Error: 'body' of entry is not a valid type.")
+                    abort(400, "Error: 'body' of entry is not of valid type.")
                 elif type(item['user']) != str:
                     abort(400, "Error: 'user' of entry is not of valid type.")
                 elif type(item['title']) != str:
@@ -86,12 +82,8 @@ def news():
         else:
             if len(request.json) > 3:
                 abort(400, "Too many fields in entry.")
-            elif 'body' not in request.json:
-                abort(400, "Field 'body' not found.")
-            elif 'user' not in request.json:
-                abort(400, "Field 'user' not found.")
-            elif 'title' not in request.json:
-                abort(400, "Field 'title' not found.")
+            elif 'body' not in request.json or 'user' not in request.json or 'title' not in request.json:
+                abort(400, "Field 'body', 'user', or 'title' not found.")
             elif type(request.json['body']) != str:
                 abort(400, "Error: 'body' of entry is not a valid type.") 
             elif type(request.json['user']) != str:
@@ -122,7 +114,7 @@ def news_by_id(_id):
             news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
             news_json = jsonify(obj_to_dict(news_obj))
         except:
-            return abort(404, "No news exists with the given id.")
+            return abort(404, "Error: No news exists with the given id.")
 
         return news_json
     elif request.method == 'DELETE':
@@ -132,17 +124,15 @@ def news_by_id(_id):
             # TODO: use the DeleteResult properly when creating response
             return "Delete successful"
         except:
-            return abort(404, "No news exists with the given id.")
+            return abort(404, "Error: No news exists with the given id.")
     else:
         try:
             if len(request.json) > 2:
-                abort(400, "Too many fields in entry.")
+                abort(400, "Error: Too many fields in entry.")
             elif request.json is None:
                 abort(400, "Error: None type is not an acceptable comment.")
-            elif 'user' not in request.json:
-                abort(400, "Error: Field 'user' not found.")
-            elif 'body' not in request.json:
-                abort(400, "Error: Field 'body' not found.")
+            elif 'user' not in request.json or 'body' not in request.json:
+                abort(400, "Error: Field 'user' or 'body' not found.")
             elif type(request.json['user']) != str:
                 abort(400, "Error: 'user' of entry is not of valid type.")
             elif type(request.json['body']) != str:
@@ -156,7 +146,7 @@ def news_by_id(_id):
                 result = mongo.db.news.update_one({"_id": ObjectId(_id)}, {"$set":{'comments':temp_news['comments']}})
                 return "Comment Successful"
         except:
-            return abort(404, "No news exists with the given id.")
+            return abort(404, "Error: No news exists with the given id.")
 
 @app.route('/snowday/<postal_code>', methods=['GET'])
 def snowday(postal_code):
