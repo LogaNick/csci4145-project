@@ -93,12 +93,17 @@ def weather_req(date: str):
     Returns:
         (requests.Response() object): A daily weather summary 
     """
-    #TODO: reformat weather API request
-    response = requests.get(WEATHER_BASE_URL+'/'
+    payload = {
+               'units': 'ca',
+               'exclude': ['currently', 'flags', 'hourly', 'minutely', 'alerts']
+              }
+    
+    response = requests.get(
+                            WEATHER_BASE_URL+'/'
                             +WEATHER_APP_ID+'/'
                             +HALIFAX_LAT+','
                             +HALIFAX_LONG+','
-                            +date
-                            +'?exclude=currently,flags,hourly,minutely,alerts&units=ca'
-                            )
+                            +date,
+                            params=payload
+                           )
     return response
