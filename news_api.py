@@ -28,25 +28,22 @@ def get_weather(date_string):
     Args:
         date_string (str): a date in YYYY-MM-DD format
     """
-    if request.method == 'GET':
-        try:
-            d = datetime.date(*(int(s) for s in date_string.split('-')))
-        except:
-            abort(400, 'The specified date format was incorrect (should be YYYY-MM-DD).')
-        
-        date_difference = d-datetime.date.today()
-        if (date_difference > timedelta(days = 16)) or (date_difference < timedelta(days = -1)):
-            abort(400, 'The specified date format was outside of the 16 day range.')
+    try:
+        d = datetime.date(*(int(s) for s in date_string.split('-')))
+    except:
+        abort(400, 'The specified date format was incorrect (should be YYYY-MM-DD).')
+    
+    date_difference = d-datetime.date.today()
+    if (date_difference > timedelta(days = 16)) or (date_difference < timedelta(days = -1)):
+        abort(400, 'The specified date format was outside of the 16 day range.')
 
-        # Formatting required by weather API, using noon (Halifax time)
-        date_string = date_string+'T12:00:00-0400'
+    # Formatting required by weather API, using noon (Halifax time)
+    date_string = date_string+'T12:00:00-0400'
 
-        # Make weather API request
-        weather_result = weather_req(date_string)
+    # Make weather API request
+    weather_result = weather_req(date_string)
 
-        return weather_result.json()
-    else:
-        abort(405, "Error: Only GET is accepted.")
+    return weather_result.json()
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
