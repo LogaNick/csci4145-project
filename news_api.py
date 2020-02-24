@@ -96,7 +96,7 @@ def news():
                 abort(400, "Error: 'body' of entry is not a valid type.") 
             elif type(request.json['user']) != str:
                 abort(400, "Error: 'user' of entry is not of valid type.")
-            elif type(item['title']) != str:
+            elif type(request.json['title']) != str:
                 abort(400, "Error: 'title' of entry is not of valid type.")
             else:
                 request.json['comments'] = []
@@ -126,29 +126,37 @@ def news_by_id(_id):
 
         return news_json
     elif request.method == 'DELETE':
-        # The following query returns an object of type DeleteResult
-        _ = mongo.db.news.delete_one({'_id': ObjectId(_id)})
-
-        # TODO: use the DeleteResult properly when creating response
-        return "Delete successful"
+        try:
+            # The following query returns an object of type DeleteResult
+            _ = mongo.db.news.delete_one({'_id': ObjectId(_id)})
+            # TODO: use the DeleteResult properly when creating response
+            return "Delete successful"
+        except:
+            return abort(404, "No news exists with the given id.")
     else:
-        if request.json is None:
-            abort(400, "Error: None type is not an acceptable comment.")
-        elif 'user' not in request.json:
-            abort(400, "Error: Field 'user' not found.")
-        elif 'body' not in request.json:
-            abort(400, "Error: Field 'body' not found.")
-        elif type(request.json['user']) != str:
-            abort(400, "Error: 'user' of entry is not of valid type.")
-        elif type(request.json['body']) != str:
-            abort(400, "Error: 'body' of entry is not of valid type.")
-        else:
-            request.json['date'] = datetime.datetime.now()
-            # TODO: @james-macphee this was causing an error so I made a temporary fix.
-            # result = mongo.db.news.update({"_id": ObjectId(_id)}, {$set: {"comments": 'TEST'}})
-            result = "successfully added news"
-            return result
-
+        try:
+            if len(request.json) > 2:
+                abort(400, "Too many fields in entry.")
+            elif request.json is None:
+                abort(400, "Error: None type is not an acceptable comment.")
+            elif 'user' not in request.json:
+                abort(400, "Error: Field 'user' not found.")
+            elif 'body' not in request.json:
+                abort(400, "Error: Field 'body' not found.")
+            elif type(request.json['user']) != str:
+                abort(400, "Error: 'user' of entry is not of valid type.")
+            elif type(request.json['body']) != str:
+                abort(400, "Error: 'body' of entry is not of valid type.")
+            else:
+                news_obj = mongo.db.news.find_one({'_id': ObjectId(_id)})
+                news_json = jsonify(obj_to_dict(news_obj))
+                request.json['date'] = datetime.datetime.now()
+                temp_news = news_json.get_json()
+                temp_news['comments'].append(request.json)
+                result = mongo.db.news.update_one({"_id": ObjectId(_id)}, {"$set":{'comments':temp_news['comments']}})
+                return "Comment Successful"
+        except:
+            return abort(404, "No news exists with the given id.")
 
 @app.route('/snowday/<postal_code>', methods=['GET'])
 def snowday(postal_code):
