@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Student Life News</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="Styles.css">
+	<script type="text/javascript" src=""></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+</head>
+
+<body>
+		
+	<header>
+		<div class="col-1">
+			<img src="images/SLN.jpg" alt="SLSLogo" style="width: 120px; height: 100px">
+		</div>
+
+		<div class="col-2">
+			<h1 style="font-style: italic; font-size: 250%; color: black" >Student Life News</h1>
+		</div>
+	</header>
+	
+	<div class="col-3">	
+		<nav>
+			<ul>
+				<li><a href="index.html" target="_blank">SLN</a></li>
+				<li><a href="news.html" target="_blank">News</a></li>
+				<li><a href="weather_snowPredict.html" target="_self">Weather</a></li>
+				<li><a href="weather_snowPredict.html" target="_self">SnowPredict</a></li>
+			</ul>
+		</nav>		
+	</div>
+
+	<div class="col-3"> <!---->
+		<h2 style=""> Weather in Halifax! </h2>
+
+		<h4 style="">Enter location and date to see the temperature and the probability of snow.</h4>
+
+		Date: <input type="date" id="datetime" onkeypress="getTemp()">
+		<div id="temp_info"> </div>
+
+		<br>
+
+		Postal Code: <input type="text" id="location" placeholder="postal code" onkeypress="getSnow()">
+		<div id="snow_info"> </div>
+
+		<script>
+
+			function getTemp() {
+
+				var dtId = document.getElementById("datetime").value;
+
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					document.getElementById("temp_info").innerHTML = this.responseText;
+				};
+
+				var url = "http://127.0.0.1:5000/weather/"+ dtId;
+				xhttp.open("GET", url, true); 
+				xhttp.send();
+			}
+
+			function getSnowPercent() {
+
+				var sId = document.getElementById("location").value;
+
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					document.getElementById("snow_info").innerHTML = this.responseText;
+				};
+
+				var url = "http://127.0.0.1:5000/snowday/"+ sId;
+				xhttp.open("GET", url, true); 
+				xhttp.send();
+			}
+
+		</script>				
+	</div>
+
+
+	<div class="col-3 footerbar">
+			
+		<footer>
+			<p style="text-align: middle;">&copy; 2020, <span style="font-style: italic"> SLN INC.</span></p>	
+		</footer>	
+	</div>	
+
+
+</body>
+</html>

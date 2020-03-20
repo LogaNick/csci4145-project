@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Student Life News</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="Styles.css">
+	<script type="text/javascript" src=""></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+</head>
+
+<body>
+		
+	<header>
+		<div class="col-1">
+			<img src="images/SLN.jpg" alt="SLSLogo" style="width: 120px; height: 100px">
+		</div>
+
+		<div class="col-2">
+			<h1 style="font-style: italic; font-size: 250%; color: black" >Student Life News</h1>
+		</div>
+	</header>
+	
+
+	<div class="col-3">
+		<nav>
+			<ul>
+				<li><a href="index.html" target="_blank">SLN</a></li>
+				<li><a href="news.html" target="_self">News</a></li>
+				<li><a href="weather_snowPredict.html" target="_blank">Weather</a></li>
+				<li><a href="weather_snowPredict.html" target="_blank">SnowPredict</a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="col-3"> <!--Retrieve all news resources-->
+		<p style="text-align: justify;"> <u> NEWS </u> </p>
+
+		<button id="btn" onclick="loadDoc()">GET</button> 
+
+		<div id="news-info"></div> 
+			
+		<script>
+
+			function loadDoc() {
+
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					document.getElementById("news-info").innerHTML = this.responseText;
+				};
+				xhttp.open("GET", "http://127.0.0.1:5000/news", true); 
+				xhttp.send();
+			}
+
+		</script>	
+	</div>
+
+	<div class="col-3"> <!--prints a line-->
+		<hr>
+	</div>
+
+	<div class="col-12"> <!--Retrieve an specific news resource-->
+		
+		<p style="text-align: justify;"> <u> GET a News </u> </p>
+		
+		Id: <input type="number" id="news_Id" onkeypress="getNews()">
+
+		<div id="a_news_info"></div>
+
+		<script>
+
+			function getNews() {
+
+				var nId = document.getElementById("news_Id").value;
+
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					document.getElementById("a_news_info").innerHTML = this.responseText;
+				};
+
+				var url = "http://127.0.0.1:5000/news/"+ nId;
+				xhttp.open("GET", url, true); 
+				xhttp.send();
+			}
+
+		</script>				
+	</div>
+
+	<div class="col-12"> <!--Create a news resource-->
+			
+		<p style="text-align: justify;"> <u> POST a News: </u> </p>
+				
+		<form method="post">
+			Body: <input type="text" name="newsBody"> <br> <br>
+			Id: <input type="number" name="newsId"> <br> <br>
+			User: <input type="text" name="user"> <br> <br>
+			<button onclick="add_news_info()">POST</button> 
+		</form>
+
+		<script>
+			
+			function add_news_info() {
+						
+
+			}
+
+		</script>
+	</div>
+
+			
+	<div class="col-12"> <!--Update a news resource-->
+				
+		<p style="text-align: justify;"> <u> PUT a News: </u> </p>
+				
+		<form method="post">
+			Body: <input type="text" name="newsBody"> <br> <br>
+			Id: <input type="number" name="newsId"> <br> <br>
+			User: <input type="text" name="user"> <br> <br>
+			<button onclick="update_news_info()">PUT</button> 
+		</form>
+
+		<script>
+					
+			function update_news_info() {
+						
+
+			}
+
+		</script>
+	</div>
+
+
+	<div class="col-12"> <!--Delete a news resource-->
+				
+		<p style="text-align: justify;"> <u> DELETE a News: </u> </p>
+				
+		<form method="post">
+			Id: <input type="number" name="newsId"> <br> <br>
+			<button onclick="delete_news()">DELETE</button> 
+		</form>
+
+		<script>
+			
+			function delete_news() {
+						
+
+			}
+
+		</script>
+	</div>
+
+	<div class="col-3 footerbar">			
+		<footer>				
+			<p style="text-align: middle;">&copy; 2020, <span style="font-style: italic"> SLN INC.</span></p>	
+		</footer>	
+	</div>	
+
+
+</body>
+</html>
